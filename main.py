@@ -18,6 +18,7 @@ def log_message(role, message):
 
 def add_two_numbers(a: int, b: int) -> int:
     """Adds two numbers."""
+    print("Executing add_two_numbers with a={a}, b={b}")
     return a + b
 
 def main():
@@ -56,16 +57,20 @@ def main():
                         result = add_two_numbers(int(fc.args['a']), int(fc.args['b']))
                         print(f"시스템 : 도구 실행 결과 = {result}")
                         
-                        # Send the result back to the model
+                        # Send the result back to the model using a dictionary
                         response = chat.send_message(
-                            genai.protos.Content(
-                                parts=[genai.protos.Part(
-                                    function_response=genai.protos.FunctionResponse(
-                                        name=fc.name,
-                                        response={'result': result}
-                                    )
-                                )]
-                            )
+                            {
+                                "parts": [
+                                    {
+                                        "function_response": {
+                                            "name": "add_two_numbers",
+                                            "response": {
+                                                "result": result,
+                                            },
+                                        }
+                                    }
+                                ]
+                            }
                         )
 
                 print(f"AI : {response.text}")
