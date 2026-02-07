@@ -10,7 +10,7 @@ def initialize_model(api_key):
     genai.configure(api_key=api_key)
     # Using 'gemini-pro' or 'gemini-1.5-flash' as a default model. 
     # Providing generation_config for better control if needed, but keeping it simple for now.
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    model = genai.GenerativeModel('gemini-2.0-flash')
     return model
 
 def start_chat_session(model):
