@@ -29,12 +29,12 @@ def main():
 
     while True:
         try:
-            if (msg := input("> ").strip().lower()) in ['quit', 'exit']:
+            if (msg := input("호두 > ").strip().lower()) in ['quit', 'exit']:
                 break
             if msg:
                 log_message("User", msg)
                 response = chat.send_message(msg).text
-                print(response)
+                print(f"AI : {response}")
                 log_message("Gemini", response)
         except (EOFError, KeyboardInterrupt):
             break
