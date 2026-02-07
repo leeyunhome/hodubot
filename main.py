@@ -51,8 +51,8 @@ def main():
                 log_message("User", msg)
                 response = chat.send_message(msg)
                 
-                # Check if the response contains a function call
-                if response.candidates[0].content.parts[0].function_call:
+                # Loop to handle multiple function calls in a row
+                while response.candidates[0].content.parts[0].function_call:
                     fc = response.candidates[0].content.parts[0].function_call
                     print(f"AI : 도구 사용 요청 - {fc.name}({fc.args})")
                     log_message("Gemini", str(response)) # Log the request
@@ -82,8 +82,12 @@ def main():
                         }
                         log_message("User", f"[도구실행결과] {tool_message}") # Log the tool message immediately after creation
                         response = chat.send_message(tool_message)
-
-                print(f"AI : {response.text}")
+                    else:
+                        break # Break if unknown tool or execution failed
+                
+                # Only print text if the response contains text (not another function call)
+                if response.candidates[0].content.parts[0].text:
+                    print(f"AI : {response.text}")
                 log_message("Gemini", str(response))
         except (EOFError, KeyboardInterrupt):
             break
