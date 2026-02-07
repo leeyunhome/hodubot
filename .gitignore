@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.env
+miniconda.sh
+miniconda3/
+.ipynb_checkpoints/
+.vscode/
+.idea/
