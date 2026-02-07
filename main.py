@@ -70,7 +70,7 @@ def main():
                                 }
                             ]
                         }
-                        log_message("User", str(tool_message)) # Log the tool message immediately after creation
+                        log_message("User", f"[도구실행결과] {tool_message}") # Log the tool message immediately after creation
                         response = chat.send_message(tool_message)
 
                 print(f"AI : {response.text}")
