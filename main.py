@@ -1,3 +1,4 @@
+# 코드 업데이트 하기 전에 STYLE.md 파일을 참고, 필요하면 STYLE.md 파일 업데이트
 import os
 import warnings
 import datetime
@@ -30,11 +31,11 @@ def main():
 
     genai.configure(api_key=api_key)
     
-    # Enable automatic function calling
+    # Disable automatic function calling to handle tools manually
     chat = genai.GenerativeModel(
         'gemini-2.0-flash',
         tools=[add_two_numbers]
-    ).start_chat(history=[], enable_automatic_function_calling=True)
+    ).start_chat(history=[])
 
     while True:
         try:
@@ -43,6 +44,30 @@ def main():
             if msg:
                 log_message("User", msg)
                 response = chat.send_message(msg)
+                
+                # Check if the response contains a function call
+                if response.candidates[0].content.parts[0].function_call:
+                    fc = response.candidates[0].content.parts[0].function_call
+                    print(f"AI : 도구 사용 요청 - {fc.name}({fc.args})")
+                    log_message("Gemini", str(response)) # Log the request
+
+                    # Manual execution logic
+                    if fc.name == 'add_two_numbers':
+                        result = add_two_numbers(int(fc.args['a']), int(fc.args['b']))
+                        print(f"시스템 : 도구 실행 결과 = {result}")
+                        
+                        # Send the result back to the model
+                        response = chat.send_message(
+                            genai.protos.Content(
+                                parts=[genai.protos.Part(
+                                    function_response=genai.protos.FunctionResponse(
+                                        name=fc.name,
+                                        response={'result': result}
+                                    )
+                                )]
+                            )
+                        )
+
                 print(f"AI : {response.text}")
                 log_message("Gemini", str(response))
         except (EOFError, KeyboardInterrupt):
