@@ -16,13 +16,7 @@ def log_message(role, message):
     with open("log.md", "a", encoding="utf-8") as f:
         f.write(f"### {timestamp} - {role}\n{message}\n\n")
 
-def add_two_numbers(a: int, b: int) -> int:
-    """Adds two numbers."""
-    return a + b
-
-def multiply_two_numbers(a: int, b: int) -> int:
-    """Multiplies two numbers."""
-    return a * b
+from tools import add_two_numbers, multiply_two_numbers
 
 def main():
     if not (api_key := os.environ.get("GOOGLE_API_KEY")):
