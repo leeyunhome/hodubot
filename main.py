@@ -2,8 +2,13 @@
 
 import os
 import sys
+import warnings
+
+# Suppress warnings
+warnings.filterwarnings("ignore", category=FutureWarning)
+
 from dotenv import load_dotenv
-import chat_utils
+import google.generativeai as genai
 
 # Load environment variables
 load_dotenv()
@@ -16,8 +21,9 @@ def main():
         sys.exit(1)
 
     try:
-        model = chat_utils.initialize_model(api_key)
-        chat = chat_utils.start_chat_session(model)
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel('gemini-2.0-flash')
+        chat = model.start_chat(history=[])
         
         while True:
             try:
@@ -32,9 +38,8 @@ def main():
                 continue
 
             try:
-                # Ensure we handle potential errors during generation
-                response = chat_utils.send_message(chat, user_input)
-                print(response)
+                response = chat.send_message(user_input)
+                print(response.text)
             except Exception as e:
                 print(f"\nAn error occurred: {e}")
 
