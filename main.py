@@ -15,6 +15,10 @@ def log_message(role, message):
     with open("log.md", "a", encoding="utf-8") as f:
         f.write(f"### {timestamp} - {role}\n{message}\n\n")
 
+def add_two_numbers(a: int, b: int) -> int:
+    """Adds two numbers."""
+    return a + b
+
 def main():
     if not (api_key := os.environ.get("GOOGLE_API_KEY")):
         print("Error: GOOGLE_API_KEY not found.")
@@ -25,7 +29,12 @@ def main():
         f.write("# Chat Log\n\n")
 
     genai.configure(api_key=api_key)
-    chat = genai.GenerativeModel('gemini-2.0-flash').start_chat(history=[])
+    
+    # Enable automatic function calling
+    chat = genai.GenerativeModel(
+        'gemini-2.0-flash',
+        tools=[add_two_numbers]
+    ).start_chat(history=[], enable_automatic_function_calling=True)
 
     while True:
         try:
