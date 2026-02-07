@@ -18,8 +18,13 @@ def log_message(role, message):
 
 def add_two_numbers(a: int, b: int) -> int:
     """Adds two numbers."""
-    print("Executing add_two_numbers with a={a}, b={b}")
+    print(f"Executing add_two_numbers with a={a}, b={b}")
     return a + b
+
+def multiply_two_numbers(a: int, b: int) -> int:
+    """Multiplies two numbers."""
+    print(f"Executing multiply_two_numbers with a={a}, b={b}")
+    return a * b
 
 def main():
     if not (api_key := os.environ.get("GOOGLE_API_KEY")):
@@ -35,7 +40,7 @@ def main():
     # Disable automatic function calling to handle tools manually
     chat = genai.GenerativeModel(
         'gemini-2.0-flash',
-        tools=[add_two_numbers]
+        tools=[add_two_numbers, multiply_two_numbers]
     ).start_chat(history=[])
 
     while True:
@@ -53,8 +58,13 @@ def main():
                     log_message("Gemini", str(response)) # Log the request
 
                     # Manual execution logic
+                    result = None
                     if fc.name == 'add_two_numbers':
                         result = add_two_numbers(int(fc.args['a']), int(fc.args['b']))
+                    elif fc.name == 'multiply_two_numbers':
+                        result = multiply_two_numbers(int(fc.args['a']), int(fc.args['b']))
+                    
+                    if result is not None:
                         print(f"시스템 : 도구 실행 결과 = {result}")
                         
                         # Send the result back to the model using a dictionary
@@ -62,7 +72,7 @@ def main():
                             "parts": [
                                 {
                                     "function_response": {
-                                        "name": "add_two_numbers",
+                                        "name": fc.name,
                                         "response": {
                                             "result": result,
                                         },
