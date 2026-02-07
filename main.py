@@ -18,12 +18,10 @@ def log_message(role, message):
 
 def add_two_numbers(a: int, b: int) -> int:
     """Adds two numbers."""
-    print(f"Executing add_two_numbers with a={a}, b={b}")
     return a + b
 
 def multiply_two_numbers(a: int, b: int) -> int:
     """Multiplies two numbers."""
-    print(f"Executing multiply_two_numbers with a={a}, b={b}")
     return a * b
 
 def main():
