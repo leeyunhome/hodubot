@@ -58,20 +58,20 @@ def main():
                         print(f"시스템 : 도구 실행 결과 = {result}")
                         
                         # Send the result back to the model using a dictionary
-                        response = chat.send_message(
-                            {
-                                "parts": [
-                                    {
-                                        "function_response": {
-                                            "name": "add_two_numbers",
-                                            "response": {
-                                                "result": result,
-                                            },
-                                        }
+                        response_dict = {
+                            "parts": [
+                                {
+                                    "function_response": {
+                                        "name": "add_two_numbers",
+                                        "response": {
+                                            "result": result,
+                                        },
                                     }
-                                ]
-                            }
-                        )
+                                }
+                            ]
+                        }
+                        log_message("User", str(response_dict)) # Log the tool response payload
+                        response = chat.send_message(response_dict)
 
                 print(f"AI : {response.text}")
                 log_message("Gemini", str(response))
