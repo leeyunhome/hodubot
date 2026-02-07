@@ -33,9 +33,9 @@ def main():
                 break
             if msg:
                 log_message("User", msg)
-                response = chat.send_message(msg).text
-                print(f"AI : {response}")
-                log_message("Gemini", response)
+                response = chat.send_message(msg)
+                print(f"AI : {response.text}")
+                log_message("Gemini", str(response))
         except (EOFError, KeyboardInterrupt):
             break
         except Exception as e:
