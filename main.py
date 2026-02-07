@@ -1,10 +1,10 @@
 import os
 import warnings
-from dotenv import load_dotenv
-import google.generativeai as genai
 
-load_dotenv()
+# Suppress warnings before importing library that emits them
 warnings.filterwarnings("ignore", category=FutureWarning)
+
+import google.generativeai as genai
 
 def main():
     if not (api_key := os.getenv("GOOGLE_API_KEY")):
