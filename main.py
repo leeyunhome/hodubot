@@ -3,6 +3,7 @@ import sys
 import subprocess
 import importlib
 from datetime import datetime
+import json
 from google import genai
 from google.genai import types
 from dotenv import load_dotenv
@@ -49,10 +50,17 @@ def main():
 
     tools_schema, tool_functions = load_tools()
 
+    system_instruction = None
+    if os.path.exists("memory/instruction.md"):
+        with open("memory/instruction.md", "r", encoding="utf-8") as f:
+            system_instruction = f.read().strip()
+            print(f"시스템: instruction.md 로드됨 ({len(system_instruction)}자)")
+
     client = genai.Client(api_key=api_key)
     chat = client.chats.create(
-        model='gemini-2.0-flash',
+        model='gemini-3-flash-preview',
         config=types.GenerateContentConfig(
+            system_instruction=system_instruction,
             tools=[tools_schema],
             automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True) 
         )
@@ -101,10 +109,30 @@ def main():
 
                         log(f, "Tool->Gemini", f"[도구 실행 결과] {fc.name}({fc.args}) = {result}")
 
+                        # 도구 실행 결과를 기본적으로 텍스트로 보냄
+                        tool_response_part = {"result": result}
+                        
+                        # play_audio 결과가 JSON이고 성공이면 오디오 파일 내용도 함께 전송
+                        if fc.name == "play_audio":
+                            try:
+                                result_json = json.loads(result)
+                                if result_json.get("status") == "success":
+                                    audio_path = result_json.get("file_path")
+                                    if audio_path and os.path.exists(audio_path):
+                                        print(f"시스템: 오디오 파일 내용을 모델에게 전송합니다... ({audio_path})")
+                                        with open(audio_path, "rb") as audio_file:
+                                            audio_data = audio_file.read()
+                                            
+                                        response_parts.append(
+                                            types.Part.from_bytes(data=audio_data, mime_type="audio/mp3")
+                                        )
+                            except json.JSONDecodeError:
+                                pass # JSON 파싱 실패 시 무시
+
                         response_parts.append(
                             types.Part.from_function_response(
                                 name=fc.name,
-                                response={"result": result}
+                                response=tool_response_part
                             )
                         )
                     
