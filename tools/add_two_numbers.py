@@ -13,7 +13,7 @@ SCHEMA = types.FunctionDeclaration(
     ),
 )
 
-def execute(a: int, b: int) -> int:
+def main(a: int, b: int) -> int:
     return a + b
 
 if __name__ == "__main__":
