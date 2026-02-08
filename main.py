@@ -41,6 +41,7 @@ def load_tools():
     return types.Tool(function_declarations=schemas), functions
 
 def main():
+    os.system("clear")
     api_key = os.environ.get("GOOGLE_API_KEY")
     if not api_key:
         print("GOOGLE_API_KEY 환경변수가 설정되지 않았습니다.")
@@ -97,6 +98,8 @@ def main():
                                 result = f"Error: {e}"
                                 
                         print(f"시스템: 결과 - {result}")
+
+                        log(f, "Tool->Gemini", f"[도구 실행 결과] {fc.name}({fc.args}) = {result}")
 
                         response_parts.append(
                             types.Part.from_function_response(
