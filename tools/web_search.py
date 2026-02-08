@@ -1,5 +1,5 @@
 from google.genai import types
-from duckduckgo_search import DDGS
+from ddgs import DDGS
 
 SCHEMA = types.FunctionDeclaration(
     name="web_search",
@@ -18,7 +18,7 @@ def main(query: str, max_results: int = 5) -> str:
     """DuckDuckGo를 사용하여 웹 검색을 수행합니다."""
     try:
         with DDGS() as ddgs:
-            results = list(ddgs.text(query, region='kr-kr', max_results=max_results))
+            results = list(ddgs.text(query, max_results=max_results))
         
         if not results:
             return "검색 결과가 없습니다."
