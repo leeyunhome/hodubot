@@ -28,4 +28,14 @@ def main(path: str = ".") -> str:
         return f"Error: {e}"
 
 if __name__ == "__main__":
-    print(SCHEMA.model_dump_json(indent=2))
+    import sys
+    if len(sys.argv) > 1:
+        # main.py expects a list representation (for eval)
+        try:
+            path = sys.argv[1]
+            files = os.listdir(path)
+            print(files) # Prints ['file1', 'file2', ...]
+        except Exception as e:
+            print([])
+    else:
+        print(SCHEMA.model_dump_json(indent=2))
